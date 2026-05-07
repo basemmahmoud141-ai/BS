@@ -1,0 +1,101 @@
+@prefix : <http://example.org/family#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://example.org/family> .
+
+<http://example.org/family> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.org/family#hasChild
+:hasChild rdf:type owl:ObjectProperty ;
+          owl:inverseOf :childOf ;
+          rdfs:domain :Person ;
+          rdfs:range :Person .
+
+###  http://example.org/family#childOf
+:childOf rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.org/family#Person
+:Person rdf:type owl:Class .
+
+###  http://example.org/family#HappyPerson
+:HappyPerson rdf:type owl:Class ;
+             rdfs:subClassOf :Person .
+
+###  http://example.org/family#Parent
+:Parent rdf:type owl:Class ;
+        owl:equivalentClass [ owl:intersectionOf ( :Person
+                                                   [ rdf:type owl:Restriction ;
+                                                     owl:onProperty :hasChild ;
+                                                     owl:someValuesFrom :Person
+                                                   ]
+                                                 ) ;
+                              rdf:type owl:Class
+                            ] .
+
+###  http://example.org/family#HappyParent
+:HappyParent rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( :Parent
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :hasChild ;
+                                                          owl:allValuesFrom :HappyPerson
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://example.org/family#Alice
+:Alice rdf:type owl:NamedIndividual ,
+                :HappyPerson .
+
+###  http://example.org/family#Bob
+:Bob rdf:type owl:NamedIndividual ,
+              :HappyPerson .
+
+###  http://example.org/family#Carol
+:Carol rdf:type owl:NamedIndividual ,
+                :Person ,
+                [ rdf:type owl:Restriction ;
+                  owl:onProperty :hasChild ;
+                  owl:allValuesFrom [ rdf:type owl:Class ;
+                                      owl:oneOf ( :Alice
+                                                  :Bob
+                                                )
+                                    ]
+                ] ;
+       :hasChild :Alice ,
+                 :Bob .
+
+###  http://example.org/family#David
+:David rdf:type owl:NamedIndividual ,
+                :Person .
+
+###  http://example.org/family#Eve
+:Eve rdf:type owl:NamedIndividual ,
+              :HappyPerson ;
+     :childOf :David .
+
+###  http://example.org/family#Frank
+:Frank rdf:type owl:NamedIndividual ,
+                :HappyParent .
+
+###  http://example.org/family#Gale
+:Gale rdf:type owl:NamedIndividual ,
+               :Person ;
+      :childOf :Frank .
